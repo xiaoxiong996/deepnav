@@ -8,7 +8,9 @@
 #   APP_PORT=3335        监听端口
 #   DEEPNAV_DIR=...      安装目录
 #   DEEPNAV_VERSION=...  指定版本标签，默认 latest
-#   ADMIN_PASSWORD=...   指定管理员密码（默认自动生成）
+#   ADMIN_PASSWORD=...   指定管理员密码（默认使用内置默认值）
+#
+# 卸载：https://raw.githubusercontent.com/xiaoxiong996/deepnav/main/deploy/uninstall-bare.sh
 set -eu
 
 REPO="xiaoxiong996/deepnav"

@@ -79,8 +79,7 @@ npm start    # 等价于 node server.js，默认 0.0.0.0:8090
 
 | 项目 | 默认值 |
 |---|---|
-| 后台地址 | `http://<host>:3335/m-deepnav` |
-| 用户名 | `admin` |
+| 后台地址 | `http://<host>:3335/m-deepnav` || 用户名 | `admin` |
 | 密码 | `DeepNav@2026` |
 
 默认值不属于机密，任何知道本项目的人都能试出来，因此：
@@ -100,11 +99,40 @@ journalctl --user -u deepnav | grep 管理后台   # 非 root 部署
 忘记密码时：
 
 ```bash
-docker exec deepnav node scripts/reset-password.js          # 随机重置
-NEW_ADMIN_PASSWORD='新密码' node scripts/reset-password.js   # 指定新密码
+docker exec -e NEW_ADMIN_PASSWORD='你的新密码' deepnav node scripts/reset-password.js
+docker restart deepnav      # 重启后生效
 ```
 
 走 HTTPS 时把 `COOKIE_SECURE` 和 `TRUST_PROXY` 改为 `true` 再重启。
+
+## 一键卸载
+
+默认只移除容器/服务，**保留数据**，方便以后重装：
+
+```bash
+# Docker
+curl -fsSL https://raw.githubusercontent.com/xiaoxiong996/deepnav/main/deploy/uninstall-docker.sh | sh
+
+# 非 root 直接部署
+curl -fsSL https://raw.githubusercontent.com/xiaoxiong996/deepnav/main/deploy/uninstall-bare.sh | sh
+```
+
+连配置、上传图片和管理员密码一起删掉（**不可恢复**）：
+
+```bash
+curl -fsSL .../uninstall-docker.sh | PURGE=1 sh
+```
+
+注意 `PURGE=1` 必须写在 `sh` 前面。如果已经下载到本地，也可以 `PURGE=1 sh uninstall-docker.sh`。
+
+| 变量 | 作用 |
+|---|---|
+| `PURGE=1` | 同时删除数据卷 / 数据目录和安装目录 |
+| `KEEP_IMAGE=1` | 仅 Docker：保留镜像 |
+| `YES=1` | 跳过确认，适合脚本化 |
+| `DEEPNAV_DIR=...` | 自定义安装目录 |
+
+卸载脚本只会删除属于本项目的对象：容器要求带 `com.docker.compose.project=deepnav` 标签，数据卷要求 `deepnav` 前缀，systemd unit 要求 `ExecStart` 指向本次安装目录；同名但属于别的服务的对象会被跳过并提示。
 
 ## 后台功能
 

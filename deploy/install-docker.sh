@@ -7,7 +7,9 @@
 #   APP_PORT=3335          宿主机回环端口
 #   DEEPNAV_DIR=/opt/deepnav   安装目录
 #   DEEPNAV_IMAGE=ghcr.io/...  覆盖镜像
-#   ADMIN_PASSWORD=...     指定管理员密码（默认自动生成）
+#   ADMIN_PASSWORD=...     指定管理员密码（默认使用内置默认值）
+#
+# 卸载：https://raw.githubusercontent.com/xiaoxiong996/deepnav/main/deploy/uninstall-docker.sh
 set -eu
 
 REPO="xiaoxiong996/deepnav"
