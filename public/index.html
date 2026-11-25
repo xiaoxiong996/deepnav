@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="{{THEME_COLOR}}" />
+    <meta name="description" content="{{DESCRIPTION}}" />
+    <title>{{TITLE}}</title>
+    <link rel="icon" href="{{FAVICON_HREF}}" />
+    {{PRELOAD}}
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/theme.css" data-theme-color />
+    <script src="/app.js" defer></script>
+  </head>
+  <body class="{{BODY_CLASS}}">
+    <template id="brand-mark-default">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 2.8 14.7 9l6.5 3-6.5 3L12 21.2 9.3 15l-6.5-3 6.5-3L12 2.8Z" />
+        <circle cx="12" cy="12" r="2.2" />
+      </svg>
+    </template>
+
+    <div id="custom-background" class="custom-background{{BACKGROUND_CLASS}}"{{BACKGROUND_HIDDEN}} aria-hidden="true">
+      <img id="custom-background-image" class="bg-desktop" alt=""{{BACKGROUND_DESKTOP}} />
+      <img id="custom-background-mobile" class="bg-mobile" alt=""{{BACKGROUND_MOBILE}} />
+      <div class="background-shade"></div>
+    </div>
+
+    <div class="backdrop" aria-hidden="true">
+      <div class="glow glow-one"></div>
+      <div class="glow glow-two"></div>
+    </div>
+
+    <header class="topbar">
+      <div class="topbar-inner">
+        <a class="brand" href="/" aria-label="返回导航首页">
+          <span id="brand-mark" class="brand-mark" aria-hidden="true">{{BRAND_ICON_BODY}}</span>
+          <span id="brand-text" class="brand-text{{BRAND_FONT_CLASS}}"{{BRAND_TEXT_HIDDEN}}>{{BRAND_TEXT_HTML}}</span>
+        </a>
+
+        <label class="search-box">
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="m16 16 4 4" />
+          </svg>
+          <span class="visually-hidden">搜索站点</span>
+          <input
+            id="search-input"
+            type="search"
+            placeholder="搜索站点、节点或域名…"
+            autocomplete="off"
+          />
+          <kbd>/</kbd>
+        </label>
+
+        <div class="topbar-actions">
+          <span id="countdown-label" class="countdown">准备测试</span>
+          <button id="refresh-button" class="icon-button" type="button" aria-label="重新测试延迟" title="重新测试延迟">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M20 11a8 8 0 1 0-2.3 6.2" />
+              <path d="M20 4v7h-7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <div class="page-shell">
+      <main>
+        <section class="page-head" aria-labelledby="page-title">
+          <div class="page-heading">
+            <p class="eyebrow"><span class="live-dot" aria-hidden="true"></span> 自动节点延迟测试</p>
+            <h1 id="page-title">{{TITLE}}</h1>
+            <p id="page-subtitle" class="page-subtitle">
+              {{SUBTITLE}}
+            </p>
+          </div>
+
+          <div class="overview-grid" aria-label="延迟测试概览">
+            <div class="overview-card">
+              <span class="overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12a7 7 0 0 1 14 0" />
+                  <path d="M8.5 15h7" />
+                  <path d="M10.5 18h3" />
+                  <circle cx="12" cy="7" r="1.2" />
+                </svg>
+              </span>
+              <span class="overview-copy">
+                <span id="stat-online" class="overview-value">--</span>
+                <span class="overview-label">可用节点</span>
+              </span>
+            </div>
+
+            <div class="overview-card">
+              <span class="overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="4" y="4.5" width="16" height="6" rx="1.5" />
+                  <rect x="4" y="13.5" width="16" height="6" rx="1.5" />
+                  <path d="M7.5 7.5h.1M7.5 16.5h.1" />
+                </svg>
+              </span>
+              <span class="overview-copy">
+                <span id="stat-server-fastest" class="overview-value">--</span>
+                <span class="overview-label">服务器 ICMP 最低</span>
+              </span>
+            </div>
+
+            <div class="overview-card">
+              <span class="overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="3.5" y="4.5" width="17" height="15" rx="2" />
+                  <path d="M3.5 8.5h17" />
+                  <path d="M7 6.5h.1M10 6.5h.1" />
+                </svg>
+              </span>
+              <span class="overview-copy">
+                <span id="stat-browser-fastest" class="overview-value">--</span>
+                <span class="overview-label">浏览器 HTTP 最低</span>
+              </span>
+            </div>
+
+            <div class="overview-card">
+              <span class="overview-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 17.5h3.2l2.1-4.2 2.4 6 2.7-10.6 2 5.2 1.7-2.4H20" />
+                </svg>
+              </span>
+              <span class="overview-copy">
+                <span id="stat-state" class="overview-value overview-state">待测试</span>
+                <span class="overview-label">延迟测试状态</span>
+              </span>
+            </div>
+          </div>
+        </section>
+
+        <div class="section-bar">
+          <span class="section-label">站点分组</span>
+          <div class="legend" aria-label="延迟标记说明">
+            <span class="legend-item"><i class="legend-dot is-fast"></i> &lt; 120ms</span>
+            <span class="legend-item"><i class="legend-dot is-medium"></i> 120–300ms</span>
+            <span class="legend-item"><i class="legend-dot is-slow"></i> &gt; 300ms</span>
+            <span class="legend-item"><i class="legend-dot is-offline"></i> 不可用</span>
+          </div>
+          <span id="auto-refresh-note" class="section-note">访问后自动测试延迟</span>
+        </div>
+
+        <section id="sites" class="nav-root" aria-live="polite" aria-busy="true">
+          <div class="loading-grid" aria-hidden="true">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+          </div>
+          <p class="loading-caption">正在读取站点配置…</p>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <p>服务器 ICMP 与浏览器 HTTP 延迟均来自实时探测，仅用于入口选择参考。</p>
+        <p class="footer-meta">{{FOOTER_META}}</p>
+      </footer>
+    </div>
+
+    <noscript>
+      <div class="noscript">此导航页需要启用 JavaScript 才能自动测试延迟并显示节点。</div>
+    </noscript>
+  </body>
+</html>

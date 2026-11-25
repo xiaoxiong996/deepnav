@@ -1,0 +1,7 @@
+.env
+data/
+.tmp/
+node_modules/
+coverage/
+*.log
+.tools/

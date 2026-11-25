@@ -1,0 +1,7 @@
+# Builds the image locally instead of pulling it from GHCR.
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+services:
+  deepnav:
+    build:
+      context: .
+      dockerfile: Dockerfile

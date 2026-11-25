@@ -1,0 +1,29 @@
+{
+  "name": "deepnav",
+  "version": "1.12.0",
+  "private": true,
+  "description": "A self-hosted navigation page with ICMP latency checks and a password-protected admin console.",
+  "type": "module",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xiaoxiong996/deepnav.git"
+  },
+  "keywords": [
+    "navigation",
+    "homepage",
+    "dashboard",
+    "self-hosted",
+    "latency",
+    "icmp"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "node tests/app.test.js",
+    "check": "node --check server.js && node --check lib/app.js && node --check lib/store.js && node --check lib/ping.js && node --check lib/auth.js && node --check lib/security.js && node --check public/app.js && node --check public/admin.js && node --check scripts/reset-password.js"
+  }
+}

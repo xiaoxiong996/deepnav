@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="{{THEME_COLOR}}" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>{{ADMIN_TITLE}}</title>
+    <link rel="icon" href="{{FAVICON_HREF}}" />
+    <link rel="stylesheet" href="/admin.css" />
+    <link rel="stylesheet" href="/theme.css" data-theme-color />
+    <script src="/admin.js" defer></script>
+  </head>
+  <body class="{{BODY_CLASS}}">
+    <div id="admin-background" class="admin-background"{{BACKGROUND_HIDDEN}} aria-hidden="true">
+      <img id="admin-background-image" alt=""{{BACKGROUND_DESKTOP}} />
+      <div class="background-shade"></div>
+    </div>
+
+    <div class="admin-backdrop" aria-hidden="true">
+      <div class="admin-glow"></div>
+    </div>
+
+    <div id="app-loading" class="app-loading">
+      <span class="spinner" aria-hidden="true"></span>
+      <p>正在验证登录状态…</p>
+    </div>
+
+    <section id="login-view" class="login-view" hidden>
+      <div class="login-card">
+        <a class="brand" href="/" aria-label="返回导航首页">
+          <span class="brand-mark" aria-hidden="true">{{BRAND_ICON_BODY}}</span>
+          <span class="brand-text{{BRAND_FONT_CLASS}}"{{BRAND_TEXT_HIDDEN}}>{{BRAND_TEXT_HTML}}</span>
+        </a>
+
+        <div class="login-heading">
+          <span class="login-kicker">ADMIN CONSOLE</span>
+          <h1>登录管理后台</h1>
+          <p>管理站点、多个节点地址与延迟测试设置。</p>
+        </div>
+
+        <form id="login-form" class="login-form" novalidate>
+          <label class="field">
+            <span class="field-label">管理员用户名</span>
+            <input
+              id="login-username"
+              name="username"
+              type="text"
+              autocomplete="username"
+              placeholder="请输入用户名"
+              maxlength="32"
+              required
+            />
+          </label>
+          <label class="field">
+            <span class="field-label">管理员密码</span>
+            <input
+              id="login-password"
+              name="password"
+              type="password"
+              autocomplete="current-password"
+              placeholder="请输入密码"
+              required
+            />
+          </label>
+          <p id="login-error" class="form-message is-error" role="alert" hidden></p>
+          <button id="login-button" class="btn btn-primary btn-block" type="submit">
+            登录
+          </button>
+        </form>
+
+        <a class="login-back" href="/">← 返回导航页</a>
+      </div>
+    </section>
+
+    <div id="dashboard" hidden>
+      <header class="admin-topbar">
+        <div class="admin-topbar-inner">
+          <a class="brand" href="/" aria-label="返回导航首页">
+            <span class="brand-mark" aria-hidden="true">{{BRAND_ICON_BODY}}</span>
+            <span class="brand-text{{BRAND_FONT_CLASS}}"{{BRAND_TEXT_HIDDEN}}>{{BRAND_TEXT_HTML}}</span>
+          </a>
+          <span id="save-state" class="save-state">已保存</span>
+          <div class="topbar-actions">
+            <a class="btn btn-quiet" href="/" target="_blank" rel="noopener noreferrer">
+              查看导航页
+            </a>
+            <button id="logout-button" class="btn btn-quiet" type="button">退出登录</button>
+          </div>
+        </div>
+      </header>
+
+      <div id="default-credentials-warning" class="admin-warning" role="alert" hidden>
+        <strong>你还在使用默认管理员密码。</strong>
+        <span>
+          任何知道本项目的人都能登录。请前往「系统设置 → 管理员账户」修改密码，必要时同时更换「后台访问路径」。
+        </span>
+      </div>
+
+      <div class="admin-layout">
+        <aside class="admin-sidebar" aria-label="管理栏目">
+          <span class="sidebar-label">管理</span>
+          <nav class="sidebar-nav" role="tablist" aria-orientation="vertical">
+            <button
+              id="tab-sites"
+              class="sidebar-tab is-active"
+              type="button"
+              role="tab"
+              aria-selected="true"
+              aria-controls="panel-sites"
+              data-tab="sites"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="7" height="7" rx="1.5" />
+                <rect x="13.5" y="3.5" width="7" height="7" rx="1.5" />
+                <rect x="3.5" y="13.5" width="7" height="7" rx="1.5" />
+                <rect x="13.5" y="13.5" width="7" height="7" rx="1.5" />
+              </svg>
+              站点管理
+            </button>
+            <button
+              id="tab-groups"
+              class="sidebar-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-groups"
+              data-tab="groups"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 6.5h16M4 12h16M4 17.5h16" />
+              </svg>
+              分组管理
+            </button>
+            <button
+              id="tab-settings"
+              class="sidebar-tab"
+              type="button"
+              role="tab"
+              aria-selected="false"
+              aria-controls="panel-settings"
+              data-tab="settings"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="3" />
+                <path
+                  d="M19 13.5v-3l-2-.6a7 7 0 0 0-.7-1.6l1-1.9-2.1-2.1-1.9 1a7 7 0 0 0-1.6-.7L11 2.5H8l-.6 2a7 7 0 0 0-1.6.7l-1.9-1-2.1 2.1 1 1.9a7 7 0 0 0-.7 1.6l-2 .6v3l2 .6a7 7 0 0 0 .7 1.6l-1 1.9 2.1 2.1 1.9-1a7 7 0 0 0 1.6.7l.6 2h3l.6-2a7 7 0 0 0 1.6-.7l1.9 1 2.1-2.1-1-1.9a7 7 0 0 0 .7-1.6l2-.6Z"
+                />
+              </svg>
+              系统设置
+            </button>
+          </nav>
+          <div class="sidebar-meta">
+            <span>数据保存在容器卷中</span>
+            <span id="data-summary">—</span>
+          </div>
+        </aside>
+
+        <main class="admin-content">
+          <section id="panel-sites" class="tab-panel" role="tabpanel" aria-labelledby="tab-sites">
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">SERVICES</p>
+                <h1>站点管理</h1>
+                <p>每个站点可配置多个入口地址，访问导航页时会自动检测全部节点。</p>
+              </div>
+              <button id="add-site-button" class="btn btn-primary" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+                添加站点
+              </button>
+            </div>
+            <div id="site-list" class="site-admin-list"></div>
+          </section>
+
+          <section
+            id="panel-groups"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-groups"
+            hidden
+          >
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">GROUPS</p>
+                <h1>分组管理</h1>
+                <p>使用分组整理导航站点。删除分组时，其站点会移动到第一个分组。</p>
+              </div>
+              <form id="add-group-form" class="inline-form">
+                <input
+                  id="new-group-name"
+                  type="text"
+                  maxlength="30"
+                  placeholder="新分组名称"
+                  aria-label="新分组名称"
+                  required
+                />
+                <button class="btn" type="submit">添加分组</button>
+              </form>
+            </div>
+            <div class="panel-actions">
+              <button id="save-groups-button" class="btn btn-primary" type="button">
+                保存分组
+              </button>
+            </div>
+            <div id="group-list" class="group-admin-list"></div>
+          </section>
+
+          <section
+            id="panel-settings"
+            class="tab-panel"
+            role="tabpanel"
+            aria-labelledby="tab-settings"
+            hidden
+          >
+            <div class="panel-heading">
+              <div>
+                <p class="panel-kicker">SETTINGS</p>
+                <h1>系统设置</h1>
+                <p>调整导航页名称、图标、延迟测试频率与打开方式。</p>
+              </div>
+            </div>
+
+            <form id="settings-form" class="settings-card">
+              <div class="settings-card-head">
+                <h2>导航页外观</h2>
+                <p>这些信息会显示在公开导航页顶部。</p>
+              </div>
+              <div class="form-grid">
+                <label class="field field-wide">
+                  <span class="field-label">导航页名称</span>
+                  <input id="setting-title" type="text" maxlength="60" required />
+                </label>
+                <label class="field">
+                  <span class="field-label">顶部品牌文字</span>
+                  <input id="setting-brand-text" type="text" maxlength="24" placeholder="DEEPNAV" />
+                  <span class="field-hint">显示在页面左上角，留空则只显示图标。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">品牌字体</span>
+                  <select id="setting-brand-font">
+                    <option value="sans">默认无衬线</option>
+                    <option value="mono">等宽字体</option>
+                    <option value="serif">衬线字体</option>
+                  </select>
+                </label>
+                <div class="field field-wide">
+                  <span class="field-label">导航页图标</span>
+                  <div class="icon-input-row">
+                    <span id="setting-icon-preview" class="icon-preview" aria-hidden="true"></span>
+                    <input
+                      id="setting-icon"
+                      type="text"
+                      maxlength="2048"
+                      placeholder="🌐 或 https://example.com/icon.png"
+                      aria-label="导航页图标"
+                    />
+                    <button
+                      class="btn btn-small icon-picker-button"
+                      type="button"
+                      data-icon-input="setting-icon"
+                    >
+                      选择/上传
+                    </button>
+                  </div>
+                  <span class="field-hint">可填 emoji、图片链接，或从本地上传列表选择；同时用于浏览器标签页图标。</span>
+                </div>
+                <label class="field field-wide">
+                  <span class="field-label">副标题</span>
+                  <input id="setting-subtitle" type="text" maxlength="160" />
+                </label>
+                <div class="field field-wide">
+                  <span class="field-label">前台背景图片</span>
+                  <div class="icon-input-row">
+                    <span id="setting-background-preview" class="icon-preview" aria-hidden="true"></span>
+                    <input
+                      id="setting-background"
+                      type="text"
+                      maxlength="2048"
+                      placeholder="https://example.com/background.jpg 或上传"
+                      aria-label="前台背景图片"
+                    />
+                    <button
+                      class="btn btn-small icon-picker-button"
+                      type="button"
+                      data-icon-input="setting-background"
+                    >
+                      选择/上传
+                    </button>
+                  </div>
+                  <span class="field-hint">公开导航页电脑端背景，留空使用默认深色渐变。</span>
+                </div>
+                <div class="field field-wide">
+                  <span class="field-label">手机竖屏背景图片</span>
+                  <div class="icon-input-row">
+                    <span id="setting-mobile-background-preview" class="icon-preview" aria-hidden="true"></span>
+                    <input
+                      id="setting-mobile-background"
+                      type="text"
+                      maxlength="2048"
+                      placeholder="https://example.com/mobile-background.jpg 或上传"
+                      aria-label="手机竖屏背景图片"
+                    />
+                    <button
+                      class="btn btn-small icon-picker-button"
+                      type="button"
+                      data-icon-input="setting-mobile-background"
+                    >
+                      选择/上传
+                    </button>
+                  </div>
+                  <span class="field-hint">手机竖屏宽度（≤720px）时优先显示，留空则沿用电脑端背景。</span>
+                </div>
+                <div class="field field-wide">
+                  <span class="field-label">后台背景图片</span>
+                  <div class="icon-input-row">
+                    <span id="setting-admin-background-preview" class="icon-preview" aria-hidden="true"></span>
+                    <input
+                      id="setting-admin-background"
+                      type="text"
+                      maxlength="2048"
+                      placeholder="https://example.com/admin-background.jpg 或上传"
+                      aria-label="后台背景图片"
+                    />
+                    <button
+                      class="btn btn-small icon-picker-button"
+                      type="button"
+                      data-icon-input="setting-admin-background"
+                    >
+                      选择/上传
+                    </button>
+                  </div>
+                  <span class="field-hint">登录后的管理后台背景，留空使用默认深色渐变。</span>
+                </div>
+                <label class="field">
+                  <span class="field-label">背景遮罩透明度</span>
+                  <input
+                    id="setting-transparency"
+                    type="range"
+                    min="0"
+                    max="100"
+                    step="10"
+                    value="30"
+                  />
+                  <span class="field-hint"><output id="transparency-value">30%</output> · 数值越高背景图越亮</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">主题颜色</span>
+                  <div class="color-input-row">
+                    <input
+                      id="setting-theme-color"
+                      type="text"
+                      maxlength="7"
+                      placeholder="#38d9a9"
+                    />
+                    <input
+                      id="setting-theme-picker"
+                      class="theme-color-picker"
+                      type="color"
+                      value="#38d9a9"
+                      aria-label="选择主题颜色"
+                    />
+                  </div>
+                  <span class="field-hint">留空使用默认黑色主题；填写后同时调整强调色与深色背景。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">自动延迟测试间隔（秒）</span>
+                  <input id="setting-refresh" type="number" min="15" max="3600" required />
+                  <span class="field-hint">15–3600 秒，页面停留时自动重测。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">单节点延迟测试超时（毫秒）</span>
+                  <input id="setting-timeout" type="number" min="1000" max="15000" required />
+                  <span class="field-hint">1000–15000 毫秒，服务器 ICMP 与浏览器 HTTP 共用。</span>
+                </label>
+              </div>
+              <div class="check-row">
+                <label class="check">
+                  <input id="setting-new-tab" type="checkbox" />
+                  <span>点击节点后在新标签页打开</span>
+                </label>
+                <label class="check">
+                  <input id="setting-show-offline" type="checkbox" />
+                  <span>在导航页显示离线节点</span>
+                </label>
+                <label class="check">
+                  <input id="setting-hide-nodes" type="checkbox" />
+                  <span>未登录时隐藏所有节点</span>
+                </label>
+              </div>
+              <p class="field-hint">
+                开启后公开访客只能看到站点名称与「登录后查看节点」，服务端也会拒绝未登录的测速与跳转请求。
+              </p>
+              <div class="form-actions">
+                <button id="save-settings-button" class="btn btn-primary" type="submit">
+                  保存设置
+                </button>
+              </div>
+            </form>
+
+            <form id="admin-path-form" class="settings-card">
+              <div class="settings-card-head">
+                <h2>后台访问路径</h2>
+                <p>
+                  首页不再显示后台入口，后台只在这个路径下响应。保存后原路径立即失效，旧书签会返回 404。
+                </p>
+              </div>
+              <div class="form-grid">
+                <label class="field">
+                  <span class="field-label">当前后台路径</span>
+                  <input id="setting-admin-path" type="text" maxlength="48" spellcheck="false" />
+                  <span class="field-hint">
+                    以 / 开头，6–48 位小写字母、数字或短横线。请自行保存到密码管理器。
+                  </span>
+                </label>
+              </div>
+              <p id="admin-path-message" class="form-message" role="status" hidden></p>
+              <div class="form-actions">
+                <button class="btn" type="submit">保存并跳转到新路径</button>
+                <button id="admin-path-random" class="btn btn-quiet" type="button">
+                  随机生成
+                </button>
+              </div>
+            </form>
+
+            <form id="password-form" class="settings-card">
+              <div class="settings-card-head">
+                <h2>管理员账户</h2>
+                <p>可修改用户名、密码或两者；保存后其他已登录会话将立即失效。</p>
+              </div>
+              <div class="form-grid">
+                <label class="field">
+                  <span class="field-label">当前密码</span>
+                  <input
+                    id="current-password"
+                    type="password"
+                    autocomplete="current-password"
+                    required
+                  />
+                  <span class="field-hint">修改用户名或密码都需要验证当前密码。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">新用户名</span>
+                  <input
+                    id="new-username"
+                    type="text"
+                    autocomplete="username"
+                    maxlength="32"
+                    minlength="2"
+                    placeholder="留空则不修改"
+                  />
+                  <span class="field-hint">2–32 位字母、数字或 _ . @ -。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">新密码</span>
+                  <input
+                    id="new-password"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="8"
+                    maxlength="128"
+                    placeholder="留空则不修改"
+                  />
+                  <span class="field-hint">至少 8 个字符。</span>
+                </label>
+                <label class="field">
+                  <span class="field-label">确认新密码</span>
+                  <input
+                    id="confirm-password"
+                    type="password"
+                    autocomplete="new-password"
+                    minlength="8"
+                    maxlength="128"
+                    placeholder="留空则不修改"
+                  />
+                </label>
+              </div>
+              <p id="password-message" class="form-message" role="status" hidden></p>
+              <div class="form-actions">
+                <button id="save-password-button" class="btn" type="submit">保存账户修改</button>
+              </div>
+            </form>
+
+            <section class="settings-card">
+              <div class="settings-card-head">
+                <h2>配置备份</h2>
+                <p>导出或导入站点、分组和外观设置。管理员密码不会包含在备份中。</p>
+              </div>
+              <div class="backup-actions">
+                <button id="export-button" class="btn" type="button">导出配置</button>
+                <button id="import-button" class="btn" type="button">导入配置</button>
+                <input id="import-file" type="file" accept="application/json,.json" hidden />
+              </div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <dialog id="site-dialog" class="modal" aria-labelledby="site-dialog-title">
+      <form id="site-form" class="modal-card" novalidate>
+        <div class="modal-heading">
+          <div>
+            <p class="panel-kicker">SITE</p>
+            <h2 id="site-dialog-title">添加站点</h2>
+          </div>
+          <button id="site-dialog-close" class="icon-button" type="button" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="modal-body">
+          <input id="site-id" type="hidden" />
+          <div class="form-grid">
+            <div class="field field-wide">
+              <span class="field-label">图标</span>
+              <div class="icon-input-row">
+                <span id="site-icon-preview" class="icon-preview" aria-hidden="true"></span>
+                <input
+                  id="site-icon"
+                  type="text"
+                  maxlength="2048"
+                  placeholder="🌐 或从上传列表选择"
+                  aria-label="站点图标"
+                />
+                <button
+                  class="btn btn-small icon-picker-button"
+                  type="button"
+                  data-icon-input="site-icon"
+                >
+                  选择/上传
+                </button>
+              </div>
+              <span class="field-hint">emoji、图片 URL 或后台上传的本地图片。</span>
+            </div>
+            <label class="field">
+              <span class="field-label">站点名称</span>
+              <input id="site-name" type="text" maxlength="60" placeholder="例如：GitHub" required />
+            </label>
+            <label class="field">
+              <span class="field-label">所属分组</span>
+              <select id="site-group" required></select>
+            </label>
+            <label class="field field-wide">
+              <span class="field-label">描述</span>
+              <input
+                id="site-description"
+                type="text"
+                maxlength="200"
+                placeholder="可选，显示在站点名称下方"
+              />
+            </label>
+          </div>
+
+          <div class="check-row">
+            <label class="check">
+              <input id="site-guest-hidden" type="checkbox" />
+              <span>整站仅登录可见</span>
+            </label>
+          </div>
+          <p class="field-hint">
+            勾选后未登录访客看不到该站点及其所有节点，服务端也会拒绝游客对该站点节点的测速与跳转。
+          </p>
+
+          <div class="nodes-editor">
+            <div class="nodes-editor-head">
+              <div>
+                <h3>节点地址</h3>
+                <p>为同一站点添加多个可访问地址，导航页会分别进行 ICMP 与浏览器 HTTP 延迟测试；未登录访客看不到地址域名。</p>
+              </div>
+              <button id="add-node-button" class="btn btn-small" type="button">+ 添加节点</button>
+            </div>
+            <div id="node-editor-list" class="node-editor-list"></div>
+          </div>
+
+          <p id="site-form-error" class="form-message is-error" role="alert" hidden></p>
+        </div>
+
+        <div class="modal-actions">
+          <button id="site-cancel" class="btn btn-quiet" type="button">取消</button>
+          <button id="site-save" class="btn btn-primary" type="submit">保存站点</button>
+        </div>
+      </form>
+    </dialog>
+
+    <dialog id="icon-picker" class="modal icon-picker-modal" aria-labelledby="icon-picker-title">
+      <div class="modal-card">
+        <div class="modal-heading">
+          <div>
+            <p class="panel-kicker">IMAGE LIBRARY</p>
+            <h2 id="icon-picker-title">选择图片</h2>
+          </div>
+          <button id="icon-picker-close" class="icon-button" type="button" aria-label="关闭">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m6 6 12 12M18 6 6 18" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="upload-toolbar">
+            <div>
+              <h3>上传本地图片</h3>
+              <p>支持 PNG、JPEG、WebP、GIF，单张不超过 5 MB；可用于图标或背景。</p>
+            </div>
+            <button id="icon-upload-button" class="btn btn-primary" type="button">
+              上传图片
+            </button>
+            <input
+              id="icon-upload-file"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              hidden
+            />
+          </div>
+          <p id="icon-picker-message" class="form-message" role="status" hidden></p>
+          <div id="icon-upload-list" class="icon-upload-list" aria-live="polite"></div>
+        </div>
+        <div class="modal-actions">
+          <button id="icon-picker-done" class="btn btn-quiet" type="button">关闭</button>
+        </div>
+      </div>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

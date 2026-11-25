@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        node: ['20', '22', '24']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Install ping
+        run: sudo apt-get update && sudo apt-get install -y iputils-ping
+      - name: Run tests
+        run: node tests/app.test.js
+      - name: Syntax check
+        run: |
+          for file in server.js lib/*.js public/*.js; do
+            node --check "$file"
+          done

@@ -1,0 +1,38 @@
+name: deepnav
+
+# Pulls the published multi-arch image. To build from source instead, use:
+#   docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build
+services:
+  deepnav:
+    image: ${DEEPNAV_IMAGE:-ghcr.io/xiaoxiong996/deepnav:latest}
+    container_name: deepnav
+    restart: unless-stopped
+    init: true
+    ports:
+      # Loopback only: expose through Nginx / Caddy / Lucky, never directly.
+      - "127.0.0.1:${APP_PORT:-3335}:8090"
+    environment:
+      PORT: "8090"
+      DATA_DIR: /data
+      # Optional. When empty the app falls back to the built-in default password
+      # and shows a warning in the admin console until it is changed.
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:-}"
+      TZ: "${TZ:-Asia/Shanghai}"
+      COOKIE_SECURE: "${COOKIE_SECURE:-false}"
+      TRUST_PROXY: "${TRUST_PROXY:-false}"
+      HSTS_INCLUDE_SUBDOMAINS: "${HSTS_INCLUDE_SUBDOMAINS:-true}"
+    # Lets the unprivileged `node` user send ICMP echo requests.
+    sysctls:
+      net.ipv4.ping_group_range: "0 2147483647"
+    volumes:
+      - deepnav-data:/data
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  deepnav-data:
